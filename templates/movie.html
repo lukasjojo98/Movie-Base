@@ -1,0 +1,266 @@
+{%extends "layout.html"%}
+{% block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{movie[0][1]}}</title>
+</head>
+
+<style>
+    body{
+        background-color: rgb(21, 24, 29);
+    }
+
+    img{
+            border-radius: 5%;
+        }
+    img:hover{
+            box-shadow: 0 0 10px yellow;
+        }
+
+        .rate {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+
+    #actorData input{
+        background-color: rgb(68, 84, 102) !important;
+        color:rgb(153, 170, 187) !important;
+        width: 150px;
+        border-radius: 5px;
+        padding: 2px 3px;
+        margin: 8px 5px;
+    }
+    #actorData form{
+        display: inline-block;
+        gap: 10px;
+    }
+    
+    .bar {
+        background-color: transparent;
+        display: inline-block;
+        width: 15px;
+        height: 0px;
+        margin-right: 3px;
+}
+
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal2 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: rgb(68, 84, 102);
+  padding: 80px;
+  margin: auto;
+  border: 1px solid #888;
+  width: 80%;
+}
+.modal-content2 {
+  background-color: rgb(68, 84, 102);
+  padding-top: 10px;
+  margin: auto;
+  border: 1px solid #888;
+  width: 25%;
+  height: 80%;
+  border-radius: 5px;
+}
+#listOptions td{
+    padding: auto;
+    color:rgb(187, 204, 221);
+}
+#listOptions{
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+#listOptions tr{
+    border-top: 1px solid rgb(50, 67, 85);
+}
+#listOptions tr:hover td{
+    color: white;
+}
+</style>
+
+<img src="" alt="movie" id="image" style="float: left;
+width: 25%; padding-left: 0px;">
+<div style="float: left; width: 50%; padding: 0px 80px;">
+<h3 id="movie" value="{{movie[0][1]}}" style="color: white;
+float: left;">{{movie[0][1]}}</h3>
+<p id="movieYear" value="{{movie[0][2]}}" style="color: white; float: left; margin: 10px 10px;">{{movie[0][2]}}</p>
+<br>
+<br>
+<p id="overviewText" style="color: rgb(153, 170, 187);
+font-size: large;" align="left"></p>
+
+<div id="actorData">
+</div>
+<table style=" margin-left: 0px; margin-top: 50px;">
+    {%for review in reviews%}
+    <tr style="border-top: 1px solid rgb(153, 170, 187);">
+        <td style="color:rgb(153, 170, 187);">Review by <strong>{{review[1]}}</strong></td>
+    </tr>
+    <tr>
+        <td><p align="left" style="color:rgb(153, 170, 187);">{{review[4]}}</p></td>
+    </tr>
+    {%endfor%}
+</table>
+
+
+</div>
+<div style="float: right; width: 25%; background-color: rgb(68, 84, 102); border-radius: 5px;">
+    <form action="/movie" method="get">
+<div class="rate" style="margin-left: 90px;">
+    <input type="submit" id="star5" name="rate" value="5" />
+    <input type="radio" value="5" id="rating5" {{rating[5]}}>
+    <label for="star5" title="text5" >5 stars</label >
+    <input type="submit" id="star4" name="rate" value="4" />
+    <input type="radio" value="5" id="rating4" {{rating[4]}}>
+    <label for="star4" title="text">4 stars</label>
+    <input type="submit" id="star3" name="rate" value="3"  />
+    <input type="radio" value="5" id="rating3" {{rating[3]}}>
+    <label for="star3" title="text">3 stars</label>
+    <input type="submit" id="star2" name="rate" value="2"  />
+    <input type="radio" value="5" id="rating2" {{rating[2]}}>
+    <label for="star2" title="text">2 stars</label>
+    <input type="submit" id="star1" name="rate" value="1" />
+    <input type="radio" value="5" id="rating1" {{rating[1]}}>
+    <label for="star1" title="text">1 star</label>
+    <input type="hidden" value="{{movie[0][1]}}" name="moviename">
+  </div>
+  <br>
+  <br>
+  <br>
+</form>
+    <input id="listButton"type="submit" name="ratingform" value="Add to lists..." style="text-decoration: none; color: rgb(153, 170, 187);"> <br>
+    <br>
+  <form action="javascript:void(0);">
+<input type="hidden" value="{{movie[0][1]}}" name ="moviename">
+<input id="reviewButton" type="submit" name="review" value="Review..." style="text-decoration: none; color: rgb(153, 170, 187);">
+ </form>
+<br>
+<form action="/watchlist" method="post" style="padding-bottom: 10px;">
+<input type="submit" name="watchlist" value="Add to Watchlist" style="text-decoration: none; color: rgb(153, 170, 187);">
+<input type="hidden" value="{{movie[0][1]}}" name ="moviename">
+</form>
+</div>
+<div style="float: right; margin-top: auto; padding: 0px 0px; margin-right: 200px; display: block;">
+    <div class="bar" style="height: 100px;"></div>
+    <div class="bar" style="background-color:rgb(153, 170, 187);height:10px; border-radius: 3px 3px 0% 0%;"> </div>
+    <div class="bar" style="background-color:rgb(153, 170, 187);height:24px; border-radius: 3px 3px 0% 0%;"> </div>
+    <div class="bar" style="background-color:rgb(153, 170, 187);height:56px; border-radius: 3px 3px 0% 0%;"> </div>
+    <div class="bar" style="background-color:rgb(153, 170, 187);height:43px; border-radius: 3px 3px 0% 0%;"> </div>
+    <div class="bar" style="background-color:rgb(153, 170, 187);height:22px; border-radius: 3px 3px 0% 0%;"> </div>
+    <div class="bar" style="color: rgb(153, 170, 187);" id="averageScore"></div>
+</div>
+
+<div class="modal" id="myModal">
+    <div class="modal-content" style="display: table;">
+        <img src="" alt="movie" id="reviewImage" style="float: left;
+        width: 25%;">
+        <div>
+            <form action="/reviews" method="POST">
+            <h3 style="color: white; width: 70%;" id="reviewMoviename">{{movie[0][1]}}</h3>
+            <textarea name="reviewText" id="reviewText" cols="10" rows="10" placeholder="Add a review..." style="float: left; width: 40%; margin-left: 50px; border-radius: 2%; outline: none; border: none; resize: none; background-color: rgb(204, 222, 238);"></textarea>
+                <input type="submit" value="SAVE">
+                <input type="hidden" name="movieID" value="{{movie[0][0]}}">
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal2" id="myModal2">
+    <div class="modal-content2" >
+        <p style="color: white;" id="reviewMoviename">Add <strong>'{{movie[0][1]}}'</strong> to lists</p>
+        <table id="listOptions">
+            {%for list in lists%}
+            <tr onclick="addMovieToList(this)">
+                <td>
+                    <p>{{list[1]}}</p>
+                    <p style="display: none;" id="listid">{{list[0]}}</p>
+                </td>
+                <td>
+                    <p>{{list[4]}} film(s)</p>
+                </td>
+            </tr>
+            {%endfor%}
+        </table>
+        <p style="position: relative; float:left; margin-top: 350px; margin-left: 30px; color:rgb(187, 204, 221);" id="selectedLists">0 lists selected</p>
+        <form action="/list" style="position: relative;
+        float: right;
+        margin-top: 350px;
+        margin-right: 20px;
+        background-color: rgb(0, 176, 33);
+        border-radius: 3px;
+        padding: 5px 10px;" method="POST">
+            <input type="submit" value="ADD">
+            <input type="hidden" name="movieID" value="{{movie[0][0]}}">
+            {%for list in lists%}
+            <input type="hidden" name="list{{list[0]}}" value="{{list[0]}}" id="listsClicked" disabled>
+            {%endfor%}
+        </form>
+    </div>
+</div>
+<script src="/static/loadmovie.js"></script>
+
+
+
+{% endblock %}
